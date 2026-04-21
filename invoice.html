@@ -2,58 +2,24 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Spark | نظام إدارة الفواتير - لوحة التحكم</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spark | لتقنية المعلومات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Chart.js للإحصائيات -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <!-- Supabase JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background-color: #0a0c12;
-            font-family: 'Cairo', 'Inter', sans-serif;
+            font-family: 'Cairo', sans-serif;
             color: #eef2ff;
             line-height: 1.5;
-            scroll-behavior: smooth;
         }
-
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1a1e2a;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #0ff1ce;
-            border-radius: 10px;
-        }
-
         :root {
             --neon: #0ff1ce;
-            --electric: #0a66ff;
-            --dark-bg: #0a0c12;
             --card-bg: #11141f;
-            --success: #00b894;
-            --warning: #f39c12;
-            --danger: #ff4757;
         }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
+        .container { max-width: 1300px; margin: 0 auto; padding: 0 24px; }
+        
         /* Navbar */
         .navbar {
             display: flex;
@@ -62,11 +28,6 @@
             flex-wrap: wrap;
             padding: 24px 0;
             border-bottom: 1px solid rgba(15, 241, 206, 0.2);
-            position: sticky;
-            top: 0;
-            background: #0a0c12f0;
-            backdrop-filter: blur(10px);
-            z-index: 100;
         }
         .logo {
             display: flex;
@@ -75,15 +36,8 @@
             font-size: 28px;
             font-weight: 800;
         }
-        .logo span:first-child {
-            color: var(--neon);
-            text-shadow: 0 0 6px rgba(15, 241, 206, 0.5);
-        }
-        .logo span:last-child {
-            font-size: 16px;
-            font-weight: 500;
-            color: #b9c7d9;
-        }
+        .logo span:first-child { color: var(--neon); text-shadow: 0 0 6px rgba(15, 241, 206, 0.5); }
+        .logo span:last-child { font-size: 16px; font-weight: 500; color: #b9c7d9; }
         .nav-links {
             display: flex;
             gap: 32px;
@@ -94,131 +48,58 @@
             text-decoration: none;
             font-weight: 600;
             transition: 0.2s;
-            cursor: pointer;
-            padding: 8px 0;
         }
-        .nav-links a:hover, .nav-links a.active {
-            color: var(--neon);
-            border-bottom: 2px solid var(--neon);
+        .nav-links a:hover, .nav-links a.active { color: var(--neon); }
+        .invoice-link {
+            background: var(--neon);
+            color: #0a0c12 !important;
+            padding: 8px 20px;
+            border-radius: 40px;
         }
-        .menu-toggle {
-            display: none;
-            font-size: 28px;
-            cursor: pointer;
-            color: var(--neon);
-        }
+        .invoice-link:hover { background: #00d4b4; transform: translateY(-2px); }
+        
+        .menu-toggle { display: none; font-size: 28px; cursor: pointer; color: var(--neon); }
         @media (max-width: 800px) {
-            .nav-links {
-                display: none;
-                width: 100%;
-                flex-direction: column;
-                align-items: center;
-                gap: 20px;
-                padding: 30px 0;
-            }
-            .nav-links.active {
-                display: flex;
-            }
-            .menu-toggle {
-                display: block;
-            }
+            .nav-links { display: none; width: 100%; flex-direction: column; align-items: center; gap: 20px; padding: 30px 0; }
+            .nav-links.active { display: flex; }
+            .menu-toggle { display: block; }
         }
-
-        /* Buttons */
+        
         .btn {
             display: inline-block;
-            padding: 10px 24px;
+            padding: 12px 28px;
             border-radius: 40px;
             font-weight: 700;
             text-decoration: none;
             transition: all 0.25s ease;
-            font-size: 0.9rem;
-            border: none;
-            cursor: pointer;
         }
         .btn-primary {
             background: var(--neon);
             color: #0a0c12;
         }
-        .btn-primary:hover {
-            background: #00d4b4;
-            transform: translateY(-2px);
-        }
+        .btn-primary:hover { background: #00d4b4; transform: translateY(-3px); }
         .btn-outline {
             border: 1.5px solid var(--neon);
             color: var(--neon);
             background: transparent;
         }
-        .btn-outline:hover {
-            background: rgba(15, 241, 206, 0.1);
-        }
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-
-        /* Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 24px;
-            margin-bottom: 40px;
-        }
-        .stat-card {
-            background: linear-gradient(135deg, #11141f, #0d0f17);
-            border-radius: 24px;
-            padding: 24px;
-            border: 1px solid rgba(15, 241, 206, 0.2);
-            text-align: center;
-        }
-        .stat-card i {
-            font-size: 2.5rem;
-            color: var(--neon);
-            margin-bottom: 12px;
-        }
-        .stat-card h3 {
-            font-size: 2rem;
+        
+        .hero { padding: 80px 0 70px; text-align: center; }
+        .hero h1 {
+            font-size: 3.2rem;
             font-weight: 800;
-        }
-        .stat-card p {
-            color: #8f9bb3;
-            margin-top: 8px;
-        }
-
-        /* Charts */
-        .charts-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 24px;
-            margin-bottom: 40px;
-        }
-        .chart-card {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 20px;
-            border: 1px solid rgba(15, 241, 206, 0.1);
-        }
-        .chart-card h3 {
             margin-bottom: 20px;
-            text-align: center;
-            color: var(--neon);
+            background: linear-gradient(135deg, #ffffff 30%, #0ff1ce 80%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
-        canvas {
-            max-height: 300px;
-        }
-
-        /* Sections */
-        .section {
-            padding: 40px 0;
-        }
+        .hero p { font-size: 1.25rem; max-width: 700px; margin: 0 auto 36px; color: #cbd5e6; }
+        
         .section-title {
-            font-size: 2rem;
+            font-size: 2.3rem;
             font-weight: 700;
-            margin-bottom: 32px;
+            margin-bottom: 48px;
             text-align: center;
             position: relative;
         }
@@ -232,172 +113,42 @@
             height: 3px;
             background: var(--neon);
         }
-
-        /* Cards & Forms */
-        .card {
+        
+        .about {
+            background: rgba(17, 20, 31, 0.7);
+            border-radius: 48px;
+            padding: 56px 40px;
+            margin: 60px 0;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            margin: 40px 0;
+        }
+        .service-card {
             background: var(--card-bg);
-            border-radius: 24px;
-            padding: 28px;
-            border: 1px solid rgba(15, 241, 206, 0.1);
-            margin-bottom: 30px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #b9c7d9;
-        }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 12px 16px;
-            background: #1a1e2a;
-            border: 1px solid #2a2f3f;
-            border-radius: 12px;
-            color: #eef2ff;
-            font-family: inherit;
-            font-size: 1rem;
-        }
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: var(--neon);
-        }
-
-        /* Tables */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--card-bg);
-            border-radius: 20px;
-            overflow: hidden;
-        }
-        .data-table th, .data-table td {
-            padding: 15px;
-            text-align: center;
-            border-bottom: 1px solid #2a2f3f;
-        }
-        .data-table th {
-            background: #0d0f17;
-            color: var(--neon);
-            font-weight: 600;
-        }
-        .data-table tr:hover {
-            background: #1a1e2a;
-        }
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: inline-block;
-        }
-        .status-paid {
-            background: #00b89420;
-            color: #00b894;
-            border: 1px solid #00b894;
-        }
-        .status-unpaid {
-            background: #ff475720;
-            color: #ff4757;
-            border: 1px solid #ff4757;
-        }
-        .status-partially {
-            background: #f39c1220;
-            color: #f39c12;
-            border: 1px solid #f39c12;
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-        .alert-success {
-            background: #00b89420;
-            border: 1px solid #00b894;
-            color: #00b894;
-        }
-        .alert-error {
-            background: #ff475720;
-            border: 1px solid #ff4757;
-            color: #ff4757;
-        }
-        .alert-info {
-            background: #0ff1ce20;
-            border: 1px solid #0ff1ce;
-            color: #0ff1ce;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: #11141f;
             border-radius: 28px;
-            padding: 32px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            border: 1px solid var(--neon);
+            padding: 32px 24px;
+            text-align: center;
+            transition: 0.25s;
+            border: 1px solid rgba(15, 241, 206, 0.1);
         }
-        .close-modal {
-            float: left;
-            font-size: 28px;
-            cursor: pointer;
-            color: var(--neon);
+        .service-card:hover { transform: translateY(-8px); border-color: var(--neon); }
+        .service-icon { font-size: 3rem; color: var(--neon); margin-bottom: 20px; }
+        
+        .contact-section {
+            background: linear-gradient(145deg, #0e111b, #090b10);
+            border-radius: 48px;
+            padding: 56px 40px;
+            margin: 60px 0;
+            text-align: center;
         }
-
         footer {
             text-align: center;
             padding: 40px 0;
             border-top: 1px solid rgba(15, 241, 206, 0.2);
-            margin-top: 40px;
             color: #8f9bb3;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #8f9bb3;
-        }
-        
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        .action-btn {
-            background: none;
-            border: none;
-            color: var(--neon);
-            cursor: pointer;
-            font-size: 1.2rem;
-            margin: 0 5px;
-        }
-        
-        .search-box {
-            padding: 10px 16px;
-            background: #1a1e2a;
-            border: 1px solid #2a2f3f;
-            border-radius: 40px;
-            color: white;
-            width: 250px;
         }
     </style>
 </head>
@@ -407,347 +158,82 @@
     <nav class="navbar">
         <div class="logo">
             <span>⚡ SPARK</span>
-            <span>نظام الفواتير</span>
+            <span>لتقنية المعلومات</span>
         </div>
         <div class="menu-toggle" id="mobile-menu">
             <i class="fas fa-bars"></i>
         </div>
         <ul class="nav-links" id="nav-links">
-            <li><a data-page="dashboard" class="active">📊 لوحة التحكم</a></li>
-            <li><a data-page="invoices">📄 الفواتير</a></li>
-            <li><a data-page="new">➕ فاتورة جديدة</a></li>
-            <li><a data-page="clients">👥 العملاء</a></li>
-            <li><a data-page="products">🛍️ المنتجات</a></li>
+            <li><a href="#home" class="active">الرئيسية</a></li>
+            <li><a href="#about">من نحن</a></li>
+            <li><a href="#services">خدماتنا</a></li>
+            <li><a href="#contact">تواصل معنا</a></li>
+            <li><a href="invoices.html" class="invoice-link">📊 نظام الفواتير</a></li>
         </ul>
     </nav>
 
-    <div id="app-content">
-        <!-- Dashboard Page -->
-        <div id="page-dashboard" class="section">
-            <h2 class="section-title">📊 لوحة التحكم</h2>
-            <div class="stats-grid" id="stats-cards">
-                <div class="stat-card"><i class="fas fa-spinner fa-pulse"></i><h3>...</h3><p>جاري التحميل</p></div>
-            </div>
-            <div class="charts-row">
-                <div class="chart-card"><h3>📈 المبيعات الشهرية</h3><canvas id="salesChart"></canvas></div>
-                <div class="chart-card"><h3>🥧 توزيع الفواتير</h3><canvas id="statusChart"></canvas></div>
-            </div>
-            <div class="card">
-                <h3 style="margin-bottom: 20px;">🕒 آخر الفواتير</h3>
-                <div id="recent-invoices"></div>
+    <section id="home">
+        <div class="hero">
+            <h1>مرحباً بك في Spark</h1>
+            <p>نحن نقدم حلول تقنية متكاملة في البرمجة، الشبكات، وتطوير الأنظمة.<br>نحوّل أفكارك إلى مشاريع حقيقية.</p>
+            <div class="hero-buttons">
+                <a href="#services" class="btn btn-primary">استكشف خدماتنا</a>
+                <a href="invoices.html" class="btn btn-outline">📊 نظام الفواتير</a>
             </div>
         </div>
+    </section>
 
-        <!-- Invoices List Page -->
-        <div id="page-invoices" class="section" style="display: none;">
-            <div class="flex-between">
-                <h2 class="section-title" style="margin-bottom: 0;">📄 قائمة الفواتير</h2>
-                <div><input type="text" id="searchInvoice" class="search-box" placeholder="🔍 بحث برقم الفاتورة أو العميل"></div>
-            </div>
-            <div class="card" style="overflow-x: auto;">
-                <table class="data-table" id="invoices-table">
-                    <thead>
-                        <tr><th>رقم الفاتورة</th><th>العميل</th><th>التاريخ</th><th>الإجمالي</th><th>الحالة</th><th>إجراءات</th></tr>
-                    </thead>
-                    <tbody id="invoices-tbody">
-                        <tr><td colspan="6" class="loading">جاري التحميل...</td></tr>
-                    </tbody>
-                </table>
-            </div>
+    <section id="about">
+        <div class="about">
+            <h2 class="section-title">من نحن</h2>
+            <p style="font-size:1.1rem; text-align:center;"><strong>Spark</strong> هي شركة تقنية متخصصة في تطوير البرمجيات وتصميم الشبكات. نهدف إلى تقديم حلول ذكية، سريعة، وآمنة تساعد الأفراد والشركات على النمو في العالم الرقمي.</p>
         </div>
+    </section>
 
-        <!-- New Invoice Page -->
-        <div id="page-new" class="section" style="display: none;">
-            <h2 class="section-title">🧾 إنشاء فاتورة جديدة</h2>
-            <div class="card">
-                <div id="form-message"></div>
-                <div class="form-group">
-                    <label>رقم الفاتورة</label>
-                    <input type="text" id="invoice-number" placeholder="مثال: INV-001">
-                </div>
-                <div class="form-group">
-                    <label>العميل</label>
-                    <select id="client-select">
-                        <option value="">-- اختر عميل --</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>تاريخ الاستحقاق</label>
-                    <input type="date" id="due-date">
-                </div>
-                <h3>🛒 المنتجات</h3>
-                <div id="products-container">
-                    <div class="product-row" style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
-                        <select class="product-select" style="flex:2; padding:10px; background:#1a1e2a; border-radius:8px;">
-                            <option value="">-- اختر منتج --</option>
-                        </select>
-                        <input type="number" class="product-qty" placeholder="الكمية" value="1" style="flex:1; padding:10px;">
-                        <input type="number" class="product-price" placeholder="السعر" step="0.01" style="flex:1; padding:10px;">
-                        <button class="remove-product" style="background:#ff4757; border:none; padding:0 15px; border-radius:8px;">✖</button>
-                    </div>
-                </div>
-                <button class="btn btn-outline" onclick="addProductRow()">+ إضافة منتج</button>
-                <div class="invoice-total" style="margin-top: 20px; font-size: 1.3rem;">
-                    💰 الإجمالي: <span id="new-grand-total">0.00</span> ج.م
-                </div>
-                <button class="btn btn-primary" onclick="createInvoice()" style="margin-top: 20px;">💾 حفظ الفاتورة</button>
-            </div>
+    <section id="services">
+        <h2 class="section-title">🛠️ خدماتنا</h2>
+        <div class="services-grid">
+            <div class="service-card"><div class="service-icon"><i class="fas fa-code"></i></div><h3>تطوير المواقع والتطبيقات</h3><p>تصميم مواقع احترافية وتطبيقات جوال سريعة</p></div>
+            <div class="service-card"><div class="service-icon"><i class="fas fa-network-wired"></i></div><h3>تصميم وتركيب الشبكات</h3><p>شبكات داخلية وأمن الشبكات</p></div>
+            <div class="service-card"><div class="service-icon"><i class="fas fa-shield-haltered"></i></div><h3>أمن المعلومات</h3><p>حماية البيانات واستشارات أمنية</p></div>
+            <div class="service-card"><div class="service-icon"><i class="fas fa-building"></i></div><h3>حلول IT للشركات</h3><p>أتمتة العمليات والدعم التقني</p></div>
+            <div class="service-card"><div class="service-icon"><i class="fas fa-server"></i></div><h3>إدارة السيرفرات</h3><p>إعداد وصيانة الخوادم السحابية</p></div>
+            <div class="service-card"><div class="service-icon"><i class="fas fa-file-invoice"></i></div><h3>نظام الفواتير</h3><p>إدارة الفواتير والعملاء والمبيعات</p></div>
         </div>
+    </section>
 
-        <!-- Clients Page -->
-        <div id="page-clients" class="section" style="display: none;">
-            <h2 class="section-title">👥 العملاء</h2>
-            <div class="card">
-                <div style="display: grid; gap: 15px; grid-template-columns: repeat(auto-fit, minmax(200px,1fr));">
-                    <input type="text" id="client-name" placeholder="الاسم" style="padding:12px; background:#1a1e2a; border-radius:12px;">
-                    <input type="text" id="client-phone" placeholder="الهاتف" style="padding:12px; background:#1a1e2a; border-radius:12px;">
-                    <input type="email" id="client-email" placeholder="البريد" style="padding:12px; background:#1a1e2a; border-radius:12px;">
-                    <button class="btn btn-primary" onclick="addClient()">➕ إضافة عميل</button>
-                </div>
+    <section id="contact">
+        <div class="contact-section">
+            <h2 class="section-title">📞 تواصل معنا</h2>
+            <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
+                <div><i class="fab fa-whatsapp" style="font-size:2rem; color:#0ff1ce;"></i><br><a href="https://wa.me/249912691684" style="color:white;">+249 912 691 684</a></div>
+                <div><i class="far fa-envelope" style="font-size:2rem; color:#0ff1ce;"></i><br><a href="mailto:sparl.soom3a@gmail.com" style="color:white;">sparl.soom3a@gmail.com</a></div>
             </div>
-            <div id="clients-list"></div>
         </div>
-
-        <!-- Products Page -->
-        <div id="page-products" class="section" style="display: none;">
-            <h2 class="section-title">🛍️ المنتجات والخدمات</h2>
-            <div class="card">
-                <div style="display: grid; gap: 15px; grid-template-columns: repeat(auto-fit, minmax(180px,1fr));">
-                    <input type="text" id="product-name" placeholder="اسم المنتج" style="padding:12px;">
-                    <input type="text" id="product-price" placeholder="السعر" type="number" step="0.01" style="padding:12px;">
-                    <input type="text" id="product-category" placeholder="التصنيف" style="padding:12px;">
-                    <button class="btn btn-primary" onclick="addProduct()">➕ إضافة منتج</button>
-                </div>
-            </div>
-            <div id="products-list"></div>
-        </div>
-    </div>
+    </section>
 
     <footer>
-        <p>© 2025 SPARK FOR INFORMATION TECHNOLOGY — نظام الفواتير المتكامل</p>
+        <p>© 2025 SPARK FOR INFORMATION TECHNOLOGY — اسبارك لتقنية المعلومات</p>
+        <p style="margin-top: 12px;">نحوّل أفكارك إلى مشاريع حقيقية ✨</p>
     </footer>
 </div>
 
-<!-- View Invoice Modal -->
-<div id="invoice-modal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="closeModal()">&times;</span>
-        <div id="modal-invoice-details"></div>
-        <button class="btn btn-success" onclick="markAsPaid()" style="margin-top:15px;">✓ تحديد كمدفوع</button>
-    </div>
-</div>
-
 <script>
-    const SUPABASE_URL = 'https://szteseuxckhvbfmkgsue.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN6dGVzZXV4Y2todmJmbWtnc3VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NTk3NzAsImV4cCI6MjA5MjMzNTc3MH0.ZDqv4_Wd5gYB8BPYso3cmmX62JJfXN7Z9vHosxlh1Lg';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    
-    let currentInvoiceId = null;
-    let salesChart, statusChart;
-    
-    async function loadDashboard() {
-        const { data: invoices } = await supabase.from('invoices').select('*');
-        const { data: clients } = await supabase.from('clients').select('*');
-        const { data: payments } = await supabase.from('payments').select('amount');
-        
-        let totalInvoices = invoices?.length || 0;
-        let totalClients = clients?.length || 0;
-        let totalRevenue = invoices?.filter(i => i.status === 'paid').reduce((s,i) => s + (i.total_amount || 0), 0) || 0;
-        let pendingAmount = invoices?.filter(i => i.status !== 'paid').reduce((s,i) => s + (i.total_amount || 0), 0) || 0;
-        
-        document.getElementById('stats-cards').innerHTML = `
-            <div class="stat-card"><i class="fas fa-file-invoice"></i><h3>${totalInvoices}</h3><p>إجمالي الفواتير</p></div>
-            <div class="stat-card"><i class="fas fa-users"></i><h3>${totalClients}</h3><p>العملاء</p></div>
-            <div class="stat-card"><i class="fas fa-money-bill-wave"></i><h3>${totalRevenue.toFixed(2)} ج.م</h3><p>الإيرادات المحصلة</p></div>
-            <div class="stat-card"><i class="fas fa-clock"></i><h3>${pendingAmount.toFixed(2)} ج.م</h3><p>مستحقات</p></div>
-        `;
-        
-        // Monthly sales
-        const monthly = {};
-        invoices?.forEach(inv => {
-            if(inv.status === 'paid'){
-                let month = new Date(inv.created_at).toLocaleString('ar', { month: 'short' });
-                monthly[month] = (monthly[month] || 0) + inv.total_amount;
+    const menuToggle = document.getElementById('mobile-menu');
+    const navLinks = document.getElementById('nav-links');
+    menuToggle.addEventListener('click', () => navLinks.classList.toggle('active'));
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href === "#" || href === "") return;
+            const target = document.querySelector(href);
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth' });
+                navLinks.classList.remove('active');
             }
         });
-        if(salesChart) salesChart.destroy();
-        salesChart = new Chart(document.getElementById('salesChart'), {
-            type: 'bar', data: { labels: Object.keys(monthly), datasets: [{ label: 'المبيعات', data: Object.values(monthly), backgroundColor: '#0ff1ce' }] }
-        });
-        
-        // Status distribution
-        let paid = invoices?.filter(i=>i.status==='paid').length || 0;
-        let unpaid = invoices?.filter(i=>i.status==='unpaid').length || 0;
-        let partial = invoices?.filter(i=>i.status==='partially').length || 0;
-        if(statusChart) statusChart.destroy();
-        statusChart = new Chart(document.getElementById('statusChart'), {
-            type: 'doughnut', data: { labels: ['مدفوع', 'غير مدفوع', 'مدفوع جزئياً'], datasets: [{ data: [paid, unpaid, partial], backgroundColor: ['#00b894', '#ff4757', '#f39c12'] }] }
-        });
-        
-        // Recent invoices
-        let recent = invoices?.slice(0,5) || [];
-        document.getElementById('recent-invoices').innerHTML = recent.map(i => `<div class="invoice-item" style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #2a2f3f;"><span>${i.invoice_number}</span><span>${i.client_name}</span><span>${i.total_amount} ج.م</span><span class="status-badge status-${i.status}">${i.status === 'paid' ? 'مدفوع' : (i.status === 'partially' ? 'جزئي' : 'غير مدفوع')}</span></div>`).join('') || '<div class="loading">لا توجد فواتير</div>';
-    }
-    
-    async function loadInvoices() {
-        let { data } = await supabase.from('invoices').select('*').order('created_at', { ascending: false });
-        let search = document.getElementById('searchInvoice')?.value.toLowerCase() || '';
-        let filtered = data?.filter(i => i.invoice_number.toLowerCase().includes(search) || i.client_name.toLowerCase().includes(search)) || [];
-        document.getElementById('invoices-tbody').innerHTML = filtered.map(i => `
-            <tr>
-                <td>${i.invoice_number}</td><td>${i.client_name}</td><td>${new Date(i.created_at).toLocaleDateString('ar')}</td>
-                <td>${i.total_amount} ج.م</td>
-                <td><span class="status-badge status-${i.status}">${i.status === 'paid' ? 'مدفوع' : (i.status === 'partially' ? 'جزئي' : 'غير مدفوع')}</span></td>
-                <td><button class="action-btn" onclick="viewInvoice('${i.id}')"><i class="fas fa-eye"></i></button></td>
-            </tr>
-        `).join('');
-    }
-    
-    async function loadClientsAndProducts() {
-        let { data: clients } = await supabase.from('clients').select('*');
-        let clientSelect = document.getElementById('client-select');
-        if(clientSelect) clientSelect.innerHTML = '<option value="">-- اختر عميل --</option>' + (clients?.map(c => `<option value="${c.id}" data-name="${c.name}">${c.name}</option>`) || '');
-        
-        let { data: products } = await supabase.from('products').select('*');
-        document.querySelectorAll('.product-select').forEach(sel => {
-            sel.innerHTML = '<option value="">-- اختر --</option>' + (products?.map(p => `<option value="${p.id}" data-price="${p.price}" data-name="${p.name}">${p.name} - ${p.price} ج.م</option>`) || '');
-        });
-        
-        // Clients list
-        document.getElementById('clients-list').innerHTML = `<div class="card"><table class="data-table"><tr><th>الاسم</th><th>الهاتف</th><th>البريد</th></tr>${clients?.map(c => `<tr><td>${c.name}</td><td>${c.phone || '-'}</td><td>${c.email || '-'}</td></tr>`).join('') || '<tr><td colspan="3">لا يوجد عملاء</td></tr>'}${'</table></div>'}`;
-        
-        // Products list
-        document.getElementById('products-list').innerHTML = `<div class="card"><table class="data-table"><tr><th>المنتج</th><th>السعر</th><th>التصنيف</th></tr>${products?.map(p => `<tr><td>${p.name}</td><td>${p.price} ج.م</td><td>${p.category || '-'}</td></tr>`).join('') || '<tr><td colspan="3">لا توجد منتجات</td></tr>'}${'</table></div>'}`;
-    }
-    
-    function addProductRow() {
-        let container = document.getElementById('products-container');
-        let div = document.createElement('div');
-        div.className = 'product-row';
-        div.style = 'display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;';
-        div.innerHTML = `
-            <select class="product-select" style="flex:2; padding:10px; background:#1a1e2a; border-radius:8px;"><option value="">-- اختر --</option></select>
-            <input type="number" class="product-qty" placeholder="الكمية" value="1" style="flex:1; padding:10px;">
-            <input type="number" class="product-price" placeholder="السعر" step="0.01" style="flex:1; padding:10px;">
-            <button class="remove-product" style="background:#ff4757; border:none; padding:0 15px; border-radius:8px;">✖</button>
-        `;
-        container.appendChild(div);
-        attachProductEvents(div);
-        updateGrandTotalNew();
-    }
-    
-    function attachProductEvents(container) {
-        container.querySelector('.product-select')?.addEventListener('change', (e) => {
-            let opt = e.target.selectedOptions[0];
-            let price = opt?.dataset?.price || 0;
-            container.querySelector('.product-price').value = price;
-            updateGrandTotalNew();
-        });
-        container.querySelectorAll('input').forEach(inp => inp.addEventListener('input', () => updateGrandTotalNew()));
-        container.querySelector('.remove-product')?.addEventListener('click', () => container.remove());
-    }
-    
-    function updateGrandTotalNew() {
-        let total = 0;
-        document.querySelectorAll('.product-row').forEach(row => {
-            let qty = parseFloat(row.querySelector('.product-qty')?.value) || 0;
-            let price = parseFloat(row.querySelector('.product-price')?.value) || 0;
-            total += qty * price;
-        });
-        document.getElementById('new-grand-total').innerText = total.toFixed(2);
-        return total;
-    }
-    
-    async function createInvoice() {
-        let invoiceNumber = document.getElementById('invoice-number').value.trim();
-        let clientId = document.getElementById('client-select').value;
-        let clientName = document.getElementById('client-select').selectedOptions[0]?.dataset?.name || '';
-        let dueDate = document.getElementById('due-date').value;
-        if(!invoiceNumber || !clientId) { alert('أدخل رقم الفاتورة واختر عميل'); return; }
-        
-        let items = [];
-        document.querySelectorAll('.product-row').forEach(row => {
-            let productName = row.querySelector('.product-select')?.selectedOptions[0]?.innerText?.split('-')[0]?.trim() || 'منتج';
-            let qty = parseFloat(row.querySelector('.product-qty')?.value) || 0;
-            let price = parseFloat(row.querySelector('.product-price')?.value) || 0;
-            if(qty && price) items.push({ product_name: productName, quantity: qty, unit_price: price, total_price: qty*price });
-        });
-        if(items.length === 0) { alert('أضف منتج واحد على الأقل'); return; }
-        
-        let total = parseFloat(document.getElementById('new-grand-total').innerText);
-        let { data, error } = await supabase.from('invoices').insert([{
-            invoice_number: invoiceNumber, client_id: clientId, client_name: clientName,
-            due_date: dueDate, total_amount: total, status: 'unpaid', created_at: new Date()
-        }]).select();
-        if(error) { alert('خطأ: '+error.message); return; }
-        
-        for(let item of items) {
-            await supabase.from('invoice_items').insert({ invoice_id: data[0].id, ...item });
-        }
-        alert('تم إنشاء الفاتورة بنجاح!');
-        showPage('invoices');
-        loadInvoices();
-        loadDashboard();
-    }
-    
-    async function addClient() {
-        let name = document.getElementById('client-name').value.trim();
-        if(!name) { alert('أدخل اسم العميل'); return; }
-        let { error } = await supabase.from('clients').insert({ name, phone: document.getElementById('client-phone').value, email: document.getElementById('client-email').value });
-        if(error) alert('خطأ: '+error.message);
-        else { alert('تمت الإضافة'); loadClientsAndProducts(); loadDashboard(); }
-    }
-    
-    async function addProduct() {
-        let name = document.getElementById('product-name').value.trim();
-        let price = parseFloat(document.getElementById('product-price').value);
-        if(!name || !price) { alert('أدخل الاسم والسعر'); return; }
-        let { error } = await supabase.from('products').insert({ name, price, category: document.getElementById('product-category').value });
-        if(error) alert('خطأ: '+error.message);
-        else { alert('تمت الإضافة'); loadClientsAndProducts(); }
-    }
-    
-    async function viewInvoice(id) {
-        let { data: inv } = await supabase.from('invoices').select('*').eq('id', id).single();
-        let { data: items } = await supabase.from('invoice_items').select('*').eq('invoice_id', id);
-        currentInvoiceId = id;
-        document.getElementById('modal-invoice-details').innerHTML = `
-            <h3>${inv.invoice_number}</h3><p>العميل: ${inv.client_name}</p><p>التاريخ: ${new Date(inv.created_at).toLocaleDateString()}</p>
-            <p>الحالة: <span class="status-badge status-${inv.status}">${inv.status}</span></p>
-            <table class="data-table"><tr><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th></tr>
-            ${items?.map(i => `<tr><td>${i.product_name}</td><td>${i.quantity}</td><td>${i.unit_price}</td><td>${i.total_price}</td></tr>`).join('')}
-            <tr><td colspan="3"><strong>الإجمالي</strong></td><td><strong>${inv.total_amount} ج.م</strong></td></tr></table>
-        `;
-        document.getElementById('invoice-modal').style.display = 'flex';
-    }
-    
-    async function markAsPaid() {
-        if(!currentInvoiceId) return;
-        await supabase.from('invoices').update({ status: 'paid' }).eq('id', currentInvoiceId);
-        alert('تم التحديث');
-        closeModal();
-        loadInvoices();
-        loadDashboard();
-    }
-    
-    function closeModal() { document.getElementById('invoice-modal').style.display = 'none'; currentInvoiceId = null; }
-    
-    function showPage(page) {
-        ['dashboard','invoices','new','clients','products'].forEach(p => document.getElementById(`page-${p}`).style.display = 'none');
-        document.getElementById(`page-${page}`).style.display = 'block';
-        document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-        document.querySelector(`.nav-links a[data-page="${page}"]`).classList.add('active');
-        if(page === 'dashboard') loadDashboard();
-        if(page === 'invoices') loadInvoices();
-        if(page === 'clients' || page === 'products') loadClientsAndProducts();
-        if(page === 'new') loadClientsAndProducts();
-    }
-    
-    document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', (e) => { e.preventDefault(); showPage(a.dataset.page); }));
-    document.getElementById('mobile-menu').addEventListener('click', () => document.getElementById('nav-links').classList.toggle('active'));
-    document.getElementById('searchInvoice')?.addEventListener('input', () => loadInvoices());
-    
-    showPage('dashboard');
+    });
 </script>
 </body>
 </html>
