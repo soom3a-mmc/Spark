@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Spark | نظام الفواتير - لتقنية المعلومات</title>
+    <title>Spark | نظام إدارة الفواتير - لوحة التحكم</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Chart.js للإحصائيات -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -41,6 +43,9 @@
             --electric: #0a66ff;
             --dark-bg: #0a0c12;
             --card-bg: #11141f;
+            --success: #00b894;
+            --warning: #f39c12;
+            --danger: #ff4757;
         }
 
         .container {
@@ -57,6 +62,11 @@
             flex-wrap: wrap;
             padding: 24px 0;
             border-bottom: 1px solid rgba(15, 241, 206, 0.2);
+            position: sticky;
+            top: 0;
+            background: #0a0c12f0;
+            backdrop-filter: blur(10px);
+            z-index: 100;
         }
         .logo {
             display: flex;
@@ -85,9 +95,11 @@
             font-weight: 600;
             transition: 0.2s;
             cursor: pointer;
+            padding: 8px 0;
         }
         .nav-links a:hover, .nav-links a.active {
             color: var(--neon);
+            border-bottom: 2px solid var(--neon);
         }
         .menu-toggle {
             display: none;
@@ -140,16 +152,63 @@
         .btn-outline:hover {
             background: rgba(15, 241, 206, 0.1);
         }
-        .btn-danger {
-            background: #ff4757;
+        .btn-success {
+            background: var(--success);
             color: white;
         }
-        .btn-danger:hover {
-            background: #ff6b81;
+        .btn-danger {
+            background: var(--danger);
+            color: white;
         }
-        .btn-sm {
-            padding: 6px 16px;
-            font-size: 0.8rem;
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #11141f, #0d0f17);
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid rgba(15, 241, 206, 0.2);
+            text-align: center;
+        }
+        .stat-card i {
+            font-size: 2.5rem;
+            color: var(--neon);
+            margin-bottom: 12px;
+        }
+        .stat-card h3 {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+        .stat-card p {
+            color: #8f9bb3;
+            margin-top: 8px;
+        }
+
+        /* Charts */
+        .charts-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 20px;
+            border: 1px solid rgba(15, 241, 206, 0.1);
+        }
+        .chart-card h3 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--neon);
+        }
+        canvas {
+            max-height: 300px;
         }
 
         /* Sections */
@@ -206,70 +265,33 @@
             border-color: var(--neon);
         }
 
-        /* Invoice items table */
-        .items-table {
+        /* Tables */
+        .data-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
         }
-        .items-table th, .items-table td {
-            padding: 12px;
+        .data-table th, .data-table td {
+            padding: 15px;
             text-align: center;
             border-bottom: 1px solid #2a2f3f;
         }
-        .items-table th {
+        .data-table th {
+            background: #0d0f17;
             color: var(--neon);
             font-weight: 600;
         }
-        .remove-item {
-            background: none;
-            border: none;
-            color: #ff4757;
-            cursor: pointer;
-            font-size: 1.2rem;
-        }
-        .invoice-total {
-            text-align: left;
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 2px solid var(--neon);
-        }
-
-        /* Invoices list */
-        .invoices-grid {
-            display: grid;
-            gap: 20px;
-        }
-        .invoice-item {
+        .data-table tr:hover {
             background: #1a1e2a;
-            border-radius: 16px;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .invoice-item:hover {
-            border: 1px solid var(--neon);
-            transform: translateX(-5px);
-        }
-        .invoice-info h4 {
-            color: var(--neon);
-            margin-bottom: 8px;
-        }
-        .invoice-actions {
-            display: flex;
-            gap: 12px;
         }
         .status-badge {
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 600;
+            display: inline-block;
         }
         .status-paid {
             background: #00b89420;
@@ -281,6 +303,12 @@
             color: #ff4757;
             border: 1px solid #ff4757;
         }
+        .status-partially {
+            background: #f39c1220;
+            color: #f39c12;
+            border: 1px solid #f39c12;
+        }
+
         .alert {
             padding: 15px;
             border-radius: 12px;
@@ -310,7 +338,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.9);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -319,7 +347,7 @@
             background: #11141f;
             border-radius: 28px;
             padding: 32px;
-            max-width: 550px;
+            max-width: 600px;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
@@ -350,6 +378,26 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            color: var(--neon);
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin: 0 5px;
+        }
+        
+        .search-box {
+            padding: 10px 16px;
+            background: #1a1e2a;
+            border: 1px solid #2a2f3f;
+            border-radius: 40px;
+            color: white;
+            width: 250px;
         }
     </style>
 </head>
@@ -365,22 +413,46 @@
             <i class="fas fa-bars"></i>
         </div>
         <ul class="nav-links" id="nav-links">
-            <li><a data-page="invoices" class="active">📄 الفواتير</a></li>
+            <li><a data-page="dashboard" class="active">📊 لوحة التحكم</a></li>
+            <li><a data-page="invoices">📄 الفواتير</a></li>
             <li><a data-page="new">➕ فاتورة جديدة</a></li>
             <li><a data-page="clients">👥 العملاء</a></li>
+            <li><a data-page="products">🛍️ المنتجات</a></li>
         </ul>
     </nav>
 
-    <!-- Main Content -->
     <div id="app-content">
-        <!-- Invoices List Page -->
-        <div id="page-invoices" class="section">
-            <div class="flex-between" style="margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
-                <h2 class="section-title" style="margin-bottom: 0;">📄 قائمة الفواتير</h2>
-                <button class="btn btn-primary" onclick="showPage('new')">+ فاتورة جديدة</button>
+        <!-- Dashboard Page -->
+        <div id="page-dashboard" class="section">
+            <h2 class="section-title">📊 لوحة التحكم</h2>
+            <div class="stats-grid" id="stats-cards">
+                <div class="stat-card"><i class="fas fa-spinner fa-pulse"></i><h3>...</h3><p>جاري التحميل</p></div>
             </div>
-            <div id="invoices-list" class="invoices-grid">
-                <div class="loading">⏳ جاري تحميل الفواتير...</div>
+            <div class="charts-row">
+                <div class="chart-card"><h3>📈 المبيعات الشهرية</h3><canvas id="salesChart"></canvas></div>
+                <div class="chart-card"><h3>🥧 توزيع الفواتير</h3><canvas id="statusChart"></canvas></div>
+            </div>
+            <div class="card">
+                <h3 style="margin-bottom: 20px;">🕒 آخر الفواتير</h3>
+                <div id="recent-invoices"></div>
+            </div>
+        </div>
+
+        <!-- Invoices List Page -->
+        <div id="page-invoices" class="section" style="display: none;">
+            <div class="flex-between">
+                <h2 class="section-title" style="margin-bottom: 0;">📄 قائمة الفواتير</h2>
+                <div><input type="text" id="searchInvoice" class="search-box" placeholder="🔍 بحث برقم الفاتورة أو العميل"></div>
+            </div>
+            <div class="card" style="overflow-x: auto;">
+                <table class="data-table" id="invoices-table">
+                    <thead>
+                        <tr><th>رقم الفاتورة</th><th>العميل</th><th>التاريخ</th><th>الإجمالي</th><th>الحالة</th><th>إجراءات</th></tr>
+                    </thead>
+                    <tbody id="invoices-tbody">
+                        <tr><td colspan="6" class="loading">جاري التحميل...</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -394,67 +466,65 @@
                     <input type="text" id="invoice-number" placeholder="مثال: INV-001">
                 </div>
                 <div class="form-group">
-                    <label>اسم العميل</label>
-                    <input type="text" id="customer-name" placeholder="أدخل اسم العميل">
+                    <label>العميل</label>
+                    <select id="client-select">
+                        <option value="">-- اختر عميل --</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>تاريخ الاستحقاق</label>
                     <input type="date" id="due-date">
                 </div>
-                <h3 style="margin: 20px 0 10px;">🛒 المنتجات / الخدمات</h3>
-                <table class="items-table" id="items-table">
-                    <thead>
-                        <tr><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th><th></th></tr>
-                    </thead>
-                    <tbody id="items-body">
-                        <tr>
-                            <td><input type="text" placeholder="اسم المنتج" style="width:100%"></td>
-                            <td><input type="number" value="1" style="width:80px" min="1"></td>
-                            <td><input type="number" value="0" style="width:100px" min="0" step="0.01"></td>
-                            <td class="item-total">0.00</td>
-                            <td><button class="remove-item" onclick="removeRow(this)">✖</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <button class="btn btn-outline btn-sm" onclick="addRow()">+ إضافة منتج</button>
-                <div class="invoice-total">
-                    💰 الإجمالي الكلي: <span id="grand-total">0.00</span> ج.م
+                <h3>🛒 المنتجات</h3>
+                <div id="products-container">
+                    <div class="product-row" style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+                        <select class="product-select" style="flex:2; padding:10px; background:#1a1e2a; border-radius:8px;">
+                            <option value="">-- اختر منتج --</option>
+                        </select>
+                        <input type="number" class="product-qty" placeholder="الكمية" value="1" style="flex:1; padding:10px;">
+                        <input type="number" class="product-price" placeholder="السعر" step="0.01" style="flex:1; padding:10px;">
+                        <button class="remove-product" style="background:#ff4757; border:none; padding:0 15px; border-radius:8px;">✖</button>
+                    </div>
                 </div>
-                <div style="margin-top: 30px; display: flex; gap: 15px; flex-wrap: wrap;">
-                    <button class="btn btn-primary" onclick="saveInvoice()">💾 حفظ الفاتورة</button>
-                    <button class="btn btn-outline" onclick="resetForm()">🔄 إعادة تعيين</button>
+                <button class="btn btn-outline" onclick="addProductRow()">+ إضافة منتج</button>
+                <div class="invoice-total" style="margin-top: 20px; font-size: 1.3rem;">
+                    💰 الإجمالي: <span id="new-grand-total">0.00</span> ج.م
                 </div>
+                <button class="btn btn-primary" onclick="createInvoice()" style="margin-top: 20px;">💾 حفظ الفاتورة</button>
             </div>
         </div>
 
         <!-- Clients Page -->
         <div id="page-clients" class="section" style="display: none;">
-            <h2 class="section-title">👥 إدارة العملاء</h2>
+            <h2 class="section-title">👥 العملاء</h2>
             <div class="card">
-                <h3 style="margin-bottom: 20px;">إضافة عميل جديد</h3>
-                <div class="form-group">
-                    <label>اسم العميل</label>
-                    <input type="text" id="new-client-name" placeholder="اسم العميل">
+                <div style="display: grid; gap: 15px; grid-template-columns: repeat(auto-fit, minmax(200px,1fr));">
+                    <input type="text" id="client-name" placeholder="الاسم" style="padding:12px; background:#1a1e2a; border-radius:12px;">
+                    <input type="text" id="client-phone" placeholder="الهاتف" style="padding:12px; background:#1a1e2a; border-radius:12px;">
+                    <input type="email" id="client-email" placeholder="البريد" style="padding:12px; background:#1a1e2a; border-radius:12px;">
+                    <button class="btn btn-primary" onclick="addClient()">➕ إضافة عميل</button>
                 </div>
-                <div class="form-group">
-                    <label>رقم الهاتف</label>
-                    <input type="text" id="client-phone" placeholder="رقم الهاتف">
-                </div>
-                <div class="form-group">
-                    <label>البريد الإلكتروني (اختياري)</label>
-                    <input type="email" id="client-email" placeholder="example@domain.com">
-                </div>
-                <button class="btn btn-primary" onclick="addClient()">➕ إضافة عميل</button>
             </div>
-            <div id="clients-list" style="margin-top: 30px;">
-                <div class="loading">⏳ جاري تحميل العملاء...</div>
+            <div id="clients-list"></div>
+        </div>
+
+        <!-- Products Page -->
+        <div id="page-products" class="section" style="display: none;">
+            <h2 class="section-title">🛍️ المنتجات والخدمات</h2>
+            <div class="card">
+                <div style="display: grid; gap: 15px; grid-template-columns: repeat(auto-fit, minmax(180px,1fr));">
+                    <input type="text" id="product-name" placeholder="اسم المنتج" style="padding:12px;">
+                    <input type="text" id="product-price" placeholder="السعر" type="number" step="0.01" style="padding:12px;">
+                    <input type="text" id="product-category" placeholder="التصنيف" style="padding:12px;">
+                    <button class="btn btn-primary" onclick="addProduct()">➕ إضافة منتج</button>
+                </div>
             </div>
+            <div id="products-list"></div>
         </div>
     </div>
 
     <footer>
         <p>© 2025 SPARK FOR INFORMATION TECHNOLOGY — نظام الفواتير المتكامل</p>
-        <p style="margin-top: 12px; font-size: 0.8rem;">نحوّل أفكارك إلى مشاريع حقيقية ✨</p>
     </footer>
 </div>
 
@@ -463,377 +533,221 @@
     <div class="modal-content">
         <span class="close-modal" onclick="closeModal()">&times;</span>
         <div id="modal-invoice-details"></div>
-        <div style="display: flex; gap: 12px; margin-top: 25px; justify-content: center;">
-            <button class="btn btn-primary" onclick="markAsPaid()">✓ تحديد كمدفوع</button>
-            <button class="btn btn-outline" onclick="deleteInvoice()">🗑 حذف الفاتورة</button>
-        </div>
+        <button class="btn btn-success" onclick="markAsPaid()" style="margin-top:15px;">✓ تحديد كمدفوع</button>
     </div>
 </div>
 
 <script>
-    // Supabase Configuration - المفتاح الصحيح
     const SUPABASE_URL = 'https://szteseuxckhvbfmkgsue.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN6dGVzZXV4Y2todmJmbWtnc3VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NTk3NzAsImV4cCI6MjA5MjMzNTc3MH0.ZDqv4_Wd5gYB8BPYso3cmmX62JJfXN7Z9vHosxlh1Lg';
-    
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     
     let currentInvoiceId = null;
+    let salesChart, statusChart;
     
-    // Helper functions
-    function showPage(page) {
-        document.getElementById('page-invoices').style.display = 'none';
-        document.getElementById('page-new').style.display = 'none';
-        document.getElementById('page-clients').style.display = 'none';
+    async function loadDashboard() {
+        const { data: invoices } = await supabase.from('invoices').select('*');
+        const { data: clients } = await supabase.from('clients').select('*');
+        const { data: payments } = await supabase.from('payments').select('amount');
         
-        if (page === 'invoices') document.getElementById('page-invoices').style.display = 'block';
-        else if (page === 'new') document.getElementById('page-new').style.display = 'block';
-        else if (page === 'clients') document.getElementById('page-clients').style.display = 'block';
+        let totalInvoices = invoices?.length || 0;
+        let totalClients = clients?.length || 0;
+        let totalRevenue = invoices?.filter(i => i.status === 'paid').reduce((s,i) => s + (i.total_amount || 0), 0) || 0;
+        let pendingAmount = invoices?.filter(i => i.status !== 'paid').reduce((s,i) => s + (i.total_amount || 0), 0) || 0;
         
-        // Update active nav
-        document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-        document.querySelector(`.nav-links a[data-page="${page}"]`).classList.add('active');
-        
-        if (page === 'invoices') loadInvoices();
-        if (page === 'clients') loadClients();
-    }
-    
-    // Invoice Items Logic
-    function updateItemTotal(row) {
-        let qty = parseFloat(row.cells[1].querySelector('input').value) || 0;
-        let price = parseFloat(row.cells[2].querySelector('input').value) || 0;
-        let total = qty * price;
-        row.cells[3].innerText = total.toFixed(2);
-        return total;
-    }
-    
-    function updateGrandTotal() {
-        let rows = document.querySelectorAll('#items-body tr');
-        let total = 0;
-        rows.forEach(row => {
-            total += updateItemTotal(row);
-        });
-        document.getElementById('grand-total').innerText = total.toFixed(2);
-        return total;
-    }
-    
-    function addRow() {
-        let tbody = document.getElementById('items-body');
-        let newRow = tbody.insertRow();
-        newRow.innerHTML = `
-            <td><input type="text" placeholder="اسم المنتج" style="width:100%"></td>
-            <td><input type="number" value="1" style="width:80px" min="1"></td>
-            <td><input type="number" value="0" style="width:100px" min="0" step="0.01"></td>
-            <td class="item-total">0.00</td>
-            <td><button class="remove-item" onclick="removeRow(this)">✖</button></td>
+        document.getElementById('stats-cards').innerHTML = `
+            <div class="stat-card"><i class="fas fa-file-invoice"></i><h3>${totalInvoices}</h3><p>إجمالي الفواتير</p></div>
+            <div class="stat-card"><i class="fas fa-users"></i><h3>${totalClients}</h3><p>العملاء</p></div>
+            <div class="stat-card"><i class="fas fa-money-bill-wave"></i><h3>${totalRevenue.toFixed(2)} ج.م</h3><p>الإيرادات المحصلة</p></div>
+            <div class="stat-card"><i class="fas fa-clock"></i><h3>${pendingAmount.toFixed(2)} ج.م</h3><p>مستحقات</p></div>
         `;
-        let inputs = newRow.querySelectorAll('input');
-        inputs.forEach(inp => inp.addEventListener('input', () => updateGrandTotal()));
-        updateGrandTotal();
-    }
-    
-    function removeRow(btn) {
-        let row = btn.closest('tr');
-        if (document.querySelectorAll('#items-body tr').length > 1) {
-            row.remove();
-            updateGrandTotal();
-        } else {
-            showMessage('form-message', 'يجب وجود منتج واحد على الأقل', 'error');
-        }
-    }
-    
-    function resetForm() {
-        document.getElementById('invoice-number').value = '';
-        document.getElementById('customer-name').value = '';
-        document.getElementById('due-date').value = '';
-        let tbody = document.getElementById('items-body');
-        tbody.innerHTML = '';
-        addRow();
-        updateGrandTotal();
-    }
-    
-    function showMessage(elementId, msg, type) {
-        let el = document.getElementById(elementId);
-        if (!el) return;
-        el.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
-        setTimeout(() => { if (el.innerHTML.includes(msg)) el.innerHTML = ''; }, 4000);
-    }
-    
-    // Save Invoice to Supabase
-    async function saveInvoice() {
-        let invoiceNumber = document.getElementById('invoice-number').value.trim();
-        let customerName = document.getElementById('customer-name').value.trim();
-        let dueDate = document.getElementById('due-date').value;
         
-        if (!invoiceNumber) {
-            showMessage('form-message', 'الرجاء إدخال رقم الفاتورة', 'error');
-            return;
-        }
-        if (!customerName) {
-            showMessage('form-message', 'الرجاء إدخال اسم العميل', 'error');
-            return;
-        }
-        
-        let items = [];
-        let rows = document.querySelectorAll('#items-body tr');
-        for (let row of rows) {
-            let product = row.cells[0].querySelector('input').value.trim();
-            let qty = parseFloat(row.cells[1].querySelector('input').value) || 0;
-            let price = parseFloat(row.cells[2].querySelector('input').value) || 0;
-            let total = qty * price;
-            if (product && qty > 0) {
-                items.push({ product, quantity: qty, price, total: total.toFixed(2) });
+        // Monthly sales
+        const monthly = {};
+        invoices?.forEach(inv => {
+            if(inv.status === 'paid'){
+                let month = new Date(inv.created_at).toLocaleString('ar', { month: 'short' });
+                monthly[month] = (monthly[month] || 0) + inv.total_amount;
             }
-        }
-        if (items.length === 0) {
-            showMessage('form-message', 'أضف منتج واحد على الأقل', 'error');
-            return;
-        }
+        });
+        if(salesChart) salesChart.destroy();
+        salesChart = new Chart(document.getElementById('salesChart'), {
+            type: 'bar', data: { labels: Object.keys(monthly), datasets: [{ label: 'المبيعات', data: Object.values(monthly), backgroundColor: '#0ff1ce' }] }
+        });
         
-        let totalAmount = parseFloat(document.getElementById('grand-total').innerText);
+        // Status distribution
+        let paid = invoices?.filter(i=>i.status==='paid').length || 0;
+        let unpaid = invoices?.filter(i=>i.status==='unpaid').length || 0;
+        let partial = invoices?.filter(i=>i.status==='partially').length || 0;
+        if(statusChart) statusChart.destroy();
+        statusChart = new Chart(document.getElementById('statusChart'), {
+            type: 'doughnut', data: { labels: ['مدفوع', 'غير مدفوع', 'مدفوع جزئياً'], datasets: [{ data: [paid, unpaid, partial], backgroundColor: ['#00b894', '#ff4757', '#f39c12'] }] }
+        });
         
-        const invoiceData = {
-            invoice_number: invoiceNumber,
-            customer_name: customerName,
-            due_date: dueDate || null,
-            items: items,
-            total_amount: totalAmount,
-            status: 'unpaid',
-            created_at: new Date().toISOString()
-        };
-        
-        const { data, error } = await supabase
-            .from('invoices')
-            .insert([invoiceData])
-            .select();
-        
-        if (error) {
-            console.error('Supabase error:', error);
-            if (error.message.includes('relation') && error.message.includes('does not exist')) {
-                showMessage('form-message', '⚠️ جدول الفواتير غير موجود. يرجى إنشاء جدول "invoices" في Supabase أولاً. التفاصيل في وحدة التحكم', 'error');
-            } else {
-                showMessage('form-message', 'خطأ في الحفظ: ' + error.message, 'error');
-            }
-        } else {
-            showMessage('form-message', '✅ تم حفظ الفاتورة بنجاح!', 'success');
-            resetForm();
-            setTimeout(() => showPage('invoices'), 1500);
-        }
+        // Recent invoices
+        let recent = invoices?.slice(0,5) || [];
+        document.getElementById('recent-invoices').innerHTML = recent.map(i => `<div class="invoice-item" style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid #2a2f3f;"><span>${i.invoice_number}</span><span>${i.client_name}</span><span>${i.total_amount} ج.م</span><span class="status-badge status-${i.status}">${i.status === 'paid' ? 'مدفوع' : (i.status === 'partially' ? 'جزئي' : 'غير مدفوع')}</span></div>`).join('') || '<div class="loading">لا توجد فواتير</div>';
     }
     
-    // Load Invoices
     async function loadInvoices() {
-        const { data, error } = await supabase
-            .from('invoices')
-            .select('*')
-            .order('created_at', { ascending: false });
-        
-        const container = document.getElementById('invoices-list');
-        if (error) {
-            console.error(error);
-            if (error.message.includes('does not exist')) {
-                container.innerHTML = `<div class="alert alert-info">📌 لم يتم إنشاء جدول الفواتير بعد. يرجى إنشاء جدول باسم "invoices" في مشروع Supabase الخاص بك مع الأعمدة: id, invoice_number, customer_name, due_date, items(jsonb), total_amount, status, created_at</div>`;
-            } else {
-                container.innerHTML = `<div class="alert alert-error">خطأ في التحميل: ${error.message}</div>`;
-            }
-            return;
-        }
-        
-        if (!data || data.length === 0) {
-            container.innerHTML = '<div class="alert alert-info">📭 لا توجد فواتير بعد. قم بإنشاء فاتورة جديدة!</div>';
-            return;
-        }
-        
-        container.innerHTML = data.map(inv => `
-            <div class="invoice-item" onclick="viewInvoice('${inv.id}')">
-                <div class="invoice-info">
-                    <h4>🧾 ${inv.invoice_number} - ${inv.customer_name}</h4>
-                    <p>💰 ${inv.total_amount} ج.م | 📅 ${inv.due_date || 'تاريخ غير محدد'}</p>
-                </div>
-                <div class="invoice-actions">
-                    <span class="status-badge ${inv.status === 'paid' ? 'status-paid' : 'status-unpaid'}">${inv.status === 'paid' ? '✓ مدفوع' : '⏳ غير مدفوع'}</span>
-                </div>
-            </div>
+        let { data } = await supabase.from('invoices').select('*').order('created_at', { ascending: false });
+        let search = document.getElementById('searchInvoice')?.value.toLowerCase() || '';
+        let filtered = data?.filter(i => i.invoice_number.toLowerCase().includes(search) || i.client_name.toLowerCase().includes(search)) || [];
+        document.getElementById('invoices-tbody').innerHTML = filtered.map(i => `
+            <tr>
+                <td>${i.invoice_number}</td><td>${i.client_name}</td><td>${new Date(i.created_at).toLocaleDateString('ar')}</td>
+                <td>${i.total_amount} ج.م</td>
+                <td><span class="status-badge status-${i.status}">${i.status === 'paid' ? 'مدفوع' : (i.status === 'partially' ? 'جزئي' : 'غير مدفوع')}</span></td>
+                <td><button class="action-btn" onclick="viewInvoice('${i.id}')"><i class="fas fa-eye"></i></button></td>
+            </tr>
         `).join('');
     }
     
+    async function loadClientsAndProducts() {
+        let { data: clients } = await supabase.from('clients').select('*');
+        let clientSelect = document.getElementById('client-select');
+        if(clientSelect) clientSelect.innerHTML = '<option value="">-- اختر عميل --</option>' + (clients?.map(c => `<option value="${c.id}" data-name="${c.name}">${c.name}</option>`) || '');
+        
+        let { data: products } = await supabase.from('products').select('*');
+        document.querySelectorAll('.product-select').forEach(sel => {
+            sel.innerHTML = '<option value="">-- اختر --</option>' + (products?.map(p => `<option value="${p.id}" data-price="${p.price}" data-name="${p.name}">${p.name} - ${p.price} ج.م</option>`) || '');
+        });
+        
+        // Clients list
+        document.getElementById('clients-list').innerHTML = `<div class="card"><table class="data-table"><tr><th>الاسم</th><th>الهاتف</th><th>البريد</th></tr>${clients?.map(c => `<tr><td>${c.name}</td><td>${c.phone || '-'}</td><td>${c.email || '-'}</td></tr>`).join('') || '<tr><td colspan="3">لا يوجد عملاء</td></tr>'}${'</table></div>'}`;
+        
+        // Products list
+        document.getElementById('products-list').innerHTML = `<div class="card"><table class="data-table"><tr><th>المنتج</th><th>السعر</th><th>التصنيف</th></tr>${products?.map(p => `<tr><td>${p.name}</td><td>${p.price} ج.م</td><td>${p.category || '-'}</td></tr>`).join('') || '<tr><td colspan="3">لا توجد منتجات</td></tr>'}${'</table></div>'}`;
+    }
+    
+    function addProductRow() {
+        let container = document.getElementById('products-container');
+        let div = document.createElement('div');
+        div.className = 'product-row';
+        div.style = 'display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;';
+        div.innerHTML = `
+            <select class="product-select" style="flex:2; padding:10px; background:#1a1e2a; border-radius:8px;"><option value="">-- اختر --</option></select>
+            <input type="number" class="product-qty" placeholder="الكمية" value="1" style="flex:1; padding:10px;">
+            <input type="number" class="product-price" placeholder="السعر" step="0.01" style="flex:1; padding:10px;">
+            <button class="remove-product" style="background:#ff4757; border:none; padding:0 15px; border-radius:8px;">✖</button>
+        `;
+        container.appendChild(div);
+        attachProductEvents(div);
+        updateGrandTotalNew();
+    }
+    
+    function attachProductEvents(container) {
+        container.querySelector('.product-select')?.addEventListener('change', (e) => {
+            let opt = e.target.selectedOptions[0];
+            let price = opt?.dataset?.price || 0;
+            container.querySelector('.product-price').value = price;
+            updateGrandTotalNew();
+        });
+        container.querySelectorAll('input').forEach(inp => inp.addEventListener('input', () => updateGrandTotalNew()));
+        container.querySelector('.remove-product')?.addEventListener('click', () => container.remove());
+    }
+    
+    function updateGrandTotalNew() {
+        let total = 0;
+        document.querySelectorAll('.product-row').forEach(row => {
+            let qty = parseFloat(row.querySelector('.product-qty')?.value) || 0;
+            let price = parseFloat(row.querySelector('.product-price')?.value) || 0;
+            total += qty * price;
+        });
+        document.getElementById('new-grand-total').innerText = total.toFixed(2);
+        return total;
+    }
+    
+    async function createInvoice() {
+        let invoiceNumber = document.getElementById('invoice-number').value.trim();
+        let clientId = document.getElementById('client-select').value;
+        let clientName = document.getElementById('client-select').selectedOptions[0]?.dataset?.name || '';
+        let dueDate = document.getElementById('due-date').value;
+        if(!invoiceNumber || !clientId) { alert('أدخل رقم الفاتورة واختر عميل'); return; }
+        
+        let items = [];
+        document.querySelectorAll('.product-row').forEach(row => {
+            let productName = row.querySelector('.product-select')?.selectedOptions[0]?.innerText?.split('-')[0]?.trim() || 'منتج';
+            let qty = parseFloat(row.querySelector('.product-qty')?.value) || 0;
+            let price = parseFloat(row.querySelector('.product-price')?.value) || 0;
+            if(qty && price) items.push({ product_name: productName, quantity: qty, unit_price: price, total_price: qty*price });
+        });
+        if(items.length === 0) { alert('أضف منتج واحد على الأقل'); return; }
+        
+        let total = parseFloat(document.getElementById('new-grand-total').innerText);
+        let { data, error } = await supabase.from('invoices').insert([{
+            invoice_number: invoiceNumber, client_id: clientId, client_name: clientName,
+            due_date: dueDate, total_amount: total, status: 'unpaid', created_at: new Date()
+        }]).select();
+        if(error) { alert('خطأ: '+error.message); return; }
+        
+        for(let item of items) {
+            await supabase.from('invoice_items').insert({ invoice_id: data[0].id, ...item });
+        }
+        alert('تم إنشاء الفاتورة بنجاح!');
+        showPage('invoices');
+        loadInvoices();
+        loadDashboard();
+    }
+    
+    async function addClient() {
+        let name = document.getElementById('client-name').value.trim();
+        if(!name) { alert('أدخل اسم العميل'); return; }
+        let { error } = await supabase.from('clients').insert({ name, phone: document.getElementById('client-phone').value, email: document.getElementById('client-email').value });
+        if(error) alert('خطأ: '+error.message);
+        else { alert('تمت الإضافة'); loadClientsAndProducts(); loadDashboard(); }
+    }
+    
+    async function addProduct() {
+        let name = document.getElementById('product-name').value.trim();
+        let price = parseFloat(document.getElementById('product-price').value);
+        if(!name || !price) { alert('أدخل الاسم والسعر'); return; }
+        let { error } = await supabase.from('products').insert({ name, price, category: document.getElementById('product-category').value });
+        if(error) alert('خطأ: '+error.message);
+        else { alert('تمت الإضافة'); loadClientsAndProducts(); }
+    }
+    
     async function viewInvoice(id) {
-        const { data, error } = await supabase
-            .from('invoices')
-            .select('*')
-            .eq('id', id)
-            .single();
-        
-        if (error || !data) {
-            alert('خطأ في تحميل الفاتورة');
-            return;
-        }
-        
+        let { data: inv } = await supabase.from('invoices').select('*').eq('id', id).single();
+        let { data: items } = await supabase.from('invoice_items').select('*').eq('invoice_id', id);
         currentInvoiceId = id;
-        let itemsHtml = '<table class="items-table" style="width:100%"><tr><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th></tr>';
-        if (data.items && Array.isArray(data.items)) {
-            data.items.forEach(item => {
-                itemsHtml += `<tr><td>${item.product}</td><td>${item.quantity}</td><td>${item.price}</td><td>${item.total}</td></tr>`;
-            });
-        }
-        itemsHtml += '</table>';
-        
         document.getElementById('modal-invoice-details').innerHTML = `
-            <h3 style="color: #0ff1ce;">${data.invoice_number}</h3>
-            <p><strong>👤 العميل:</strong> ${data.customer_name}</p>
-            <p><strong>📅 تاريخ الاستحقاق:</strong> ${data.due_date || 'لا يوجد'}</p>
-            <p><strong>📌 الحالة:</strong> <span class="status-badge ${data.status === 'paid' ? 'status-paid' : 'status-unpaid'}">${data.status === 'paid' ? 'مدفوع' : 'غير مدفوع'}</span></p>
-            ${itemsHtml}
-            <h3 style="margin-top: 20px;">💵 الإجمالي: ${data.total_amount} ج.م</h3>
+            <h3>${inv.invoice_number}</h3><p>العميل: ${inv.client_name}</p><p>التاريخ: ${new Date(inv.created_at).toLocaleDateString()}</p>
+            <p>الحالة: <span class="status-badge status-${inv.status}">${inv.status}</span></p>
+            <table class="data-table"><tr><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th></tr>
+            ${items?.map(i => `<tr><td>${i.product_name}</td><td>${i.quantity}</td><td>${i.unit_price}</td><td>${i.total_price}</td></tr>`).join('')}
+            <tr><td colspan="3"><strong>الإجمالي</strong></td><td><strong>${inv.total_amount} ج.م</strong></td></tr></table>
         `;
         document.getElementById('invoice-modal').style.display = 'flex';
     }
     
     async function markAsPaid() {
-        if (!currentInvoiceId) return;
-        const { error } = await supabase
-            .from('invoices')
-            .update({ status: 'paid' })
-            .eq('id', currentInvoiceId);
-        
-        if (error) {
-            alert('خطأ: ' + error.message);
-        } else {
-            alert('✅ تم تحديث الفاتورة كمدفوع');
-            closeModal();
-            loadInvoices();
-        }
+        if(!currentInvoiceId) return;
+        await supabase.from('invoices').update({ status: 'paid' }).eq('id', currentInvoiceId);
+        alert('تم التحديث');
+        closeModal();
+        loadInvoices();
+        loadDashboard();
     }
     
-    async function deleteInvoice() {
-        if (!currentInvoiceId) return;
-        if (confirm('هل أنت متأكد من حذف هذه الفاتورة؟')) {
-            const { error } = await supabase
-                .from('invoices')
-                .delete()
-                .eq('id', currentInvoiceId);
-            
-            if (error) {
-                alert('خطأ في الحذف: ' + error.message);
-            } else {
-                alert('🗑 تم حذف الفاتورة');
-                closeModal();
-                loadInvoices();
-            }
-        }
+    function closeModal() { document.getElementById('invoice-modal').style.display = 'none'; currentInvoiceId = null; }
+    
+    function showPage(page) {
+        ['dashboard','invoices','new','clients','products'].forEach(p => document.getElementById(`page-${p}`).style.display = 'none');
+        document.getElementById(`page-${page}`).style.display = 'block';
+        document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+        document.querySelector(`.nav-links a[data-page="${page}"]`).classList.add('active');
+        if(page === 'dashboard') loadDashboard();
+        if(page === 'invoices') loadInvoices();
+        if(page === 'clients' || page === 'products') loadClientsAndProducts();
+        if(page === 'new') loadClientsAndProducts();
     }
     
-    function closeModal() {
-        document.getElementById('invoice-modal').style.display = 'none';
-        currentInvoiceId = null;
-    }
+    document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', (e) => { e.preventDefault(); showPage(a.dataset.page); }));
+    document.getElementById('mobile-menu').addEventListener('click', () => document.getElementById('nav-links').classList.toggle('active'));
+    document.getElementById('searchInvoice')?.addEventListener('input', () => loadInvoices());
     
-    // Clients Management
-    async function addClient() {
-        let name = document.getElementById('new-client-name').value.trim();
-        let phone = document.getElementById('client-phone').value.trim();
-        let email = document.getElementById('client-email').value.trim();
-        
-        if (!name) {
-            alert('⚠️ أدخل اسم العميل');
-            return;
-        }
-        const { error } = await supabase
-            .from('clients')
-            .insert([{ name, phone, email, created_at: new Date().toISOString() }]);
-        
-        if (error) {
-            if (error.message.includes('does not exist')) {
-                alert('⚠️ جدول العملاء غير موجود. يرجى إنشاء جدول "clients" في Supabase');
-            } else {
-                alert('خطأ: ' + error.message);
-            }
-        } else {
-            document.getElementById('new-client-name').value = '';
-            document.getElementById('client-phone').value = '';
-            document.getElementById('client-email').value = '';
-            loadClients();
-            alert('✅ تم إضافة العميل');
-        }
-    }
-    
-    async function loadClients() {
-        const { data, error } = await supabase
-            .from('clients')
-            .select('*')
-            .order('created_at', { ascending: false });
-        
-        const container = document.getElementById('clients-list');
-        if (error) {
-            if (error.message.includes('does not exist')) {
-                container.innerHTML = `<div class="alert alert-info">📌 لم يتم إنشاء جدول العملاء بعد. يرجى إنشاء جدول باسم "clients" في Supabase</div>`;
-            } else {
-                container.innerHTML = `<div class="alert alert-error">خطأ: ${error.message}</div>`;
-            }
-            return;
-        }
-        if (!data || data.length === 0) {
-            container.innerHTML = '<div class="alert alert-info">📭 لا يوجد عملاء بعد</div>';
-            return;
-        }
-        container.innerHTML = data.map(c => `
-            <div class="invoice-item" style="cursor: default;">
-                <div><strong>👤 ${c.name}</strong><br>📞 ${c.phone || 'لا يوجد رقم'}<br>✉️ ${c.email || 'لا يوجد بريد'}</div>
-            </div>
-        `).join('');
-    }
-    
-    // Event Listeners
-    document.querySelectorAll('.nav-links a').forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            showPage(link.dataset.page);
-        });
-    });
-    
-    // Add item listeners for dynamic rows
-    document.getElementById('items-body').addEventListener('input', (e) => {
-        if (e.target.tagName === 'INPUT') updateGrandTotal();
-    });
-    
-    // Mobile menu toggle
-    document.getElementById('mobile-menu').addEventListener('click', () => {
-        document.getElementById('nav-links').classList.toggle('active');
-    });
-    
-    // Initialize default page
-    showPage('invoices');
-    
-    // Close modal on outside click
-    window.onclick = function(event) {
-        let modal = document.getElementById('invoice-modal');
-        if (event.target === modal) closeModal();
-    }
+    showPage('dashboard');
 </script>
-
-<!-- تعليمات إنشاء الجداول في Supabase -->
-<div style="display: none;" id="sql-instructions">
-    -- قم بإنشاء الجدولين التاليين في SQL Editor في Supabase:
-    
-    -- جدول الفواتير
-    CREATE TABLE invoices (
-        id SERIAL PRIMARY KEY,
-        invoice_number TEXT NOT NULL,
-        customer_name TEXT NOT NULL,
-        due_date DATE,
-        items JSONB NOT NULL,
-        total_amount DECIMAL(10,2) NOT NULL,
-        status TEXT DEFAULT 'unpaid',
-        created_at TIMESTAMP DEFAULT NOW()
-    );
-    
-    -- جدول العملاء
-    CREATE TABLE clients (
-        id SERIAL PRIMARY KEY,
-        name TEXT NOT NULL,
-        phone TEXT,
-        email TEXT,
-        created_at TIMESTAMP DEFAULT NOW()
-    );
-</div>
 </body>
 </html>
