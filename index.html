@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Spark | نظام الفواتير - لتقنية المعلومات</title>
-    <!-- Google Fonts -->
+    <title>Spark | لتقنية المعلومات</title>
+    <!-- Google Fonts: Cairo modern Arabic + Poppins for English mix -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
+    <!-- Font Awesome 6 (free) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Supabase JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
             margin: 0;
@@ -25,6 +23,7 @@
             scroll-behavior: smooth;
         }
 
+        /* custom scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -35,21 +34,26 @@
             background: #0ff1ce;
             border-radius: 10px;
         }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00d4b4;
+        }
 
+        /* electric blue / neon cyan accent */
         :root {
             --neon: #0ff1ce;
             --electric: #0a66ff;
             --dark-bg: #0a0c12;
             --card-bg: #11141f;
+            --glass: rgba(18, 22, 35, 0.8);
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1300px;
             margin: 0 auto;
             padding: 0 24px;
         }
 
-        /* Navbar */
+        /* header & navbar */
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -64,6 +68,7 @@
             gap: 8px;
             font-size: 28px;
             font-weight: 800;
+            letter-spacing: -0.5px;
         }
         .logo span:first-child {
             color: var(--neon);
@@ -73,6 +78,7 @@
             font-size: 16px;
             font-weight: 500;
             color: #b9c7d9;
+            letter-spacing: 0;
         }
         .nav-links {
             display: flex;
@@ -84,10 +90,12 @@
             text-decoration: none;
             font-weight: 600;
             transition: 0.2s;
+            font-size: 1.05rem;
         }
-        .nav-links a:hover, .nav-links a.active {
+        .nav-links a:hover {
             color: var(--neon);
         }
+        /* mobile */
         .menu-toggle {
             display: none;
             font-size: 28px;
@@ -101,7 +109,7 @@
                 flex-direction: column;
                 align-items: center;
                 gap: 20px;
-                padding: 30px 0;
+                padding: 30px 0 20px;
             }
             .nav-links.active {
                 display: flex;
@@ -109,27 +117,33 @@
             .menu-toggle {
                 display: block;
             }
+            .navbar {
+                flex-direction: row;
+            }
         }
 
-        /* Buttons */
+        /* buttons */
         .btn {
             display: inline-block;
-            padding: 10px 24px;
+            padding: 12px 28px;
             border-radius: 40px;
             font-weight: 700;
             text-decoration: none;
             transition: all 0.25s ease;
-            font-size: 0.9rem;
+            font-size: 1rem;
+            text-align: center;
             border: none;
             cursor: pointer;
         }
         .btn-primary {
             background: var(--neon);
             color: #0a0c12;
+            box-shadow: 0 0 12px rgba(15, 241, 206, 0.4);
         }
         .btn-primary:hover {
             background: #00d4b4;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px -8px rgba(15, 241, 206, 0.5);
         }
         .btn-outline {
             border: 1.5px solid var(--neon);
@@ -138,25 +152,45 @@
         }
         .btn-outline:hover {
             background: rgba(15, 241, 206, 0.1);
-        }
-        .btn-danger {
-            background: #ff4757;
-            color: white;
-        }
-        .btn-danger:hover {
-            background: #ff6b81;
+            transform: translateY(-2px);
         }
 
-        /* Sections */
-        .section {
-            padding: 40px 0;
+        /* hero section */
+        .hero {
+            padding: 80px 0 70px;
+            text-align: center;
         }
+        .hero h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff 30%, #0ff1ce 80%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .hero p {
+            font-size: 1.25rem;
+            max-width: 700px;
+            margin: 0 auto 36px;
+            color: #cbd5e6;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* section titles */
         .section-title {
-            font-size: 2rem;
+            font-size: 2.3rem;
             font-weight: 700;
-            margin-bottom: 32px;
+            margin-bottom: 48px;
             text-align: center;
             position: relative;
+            display: inline-block;
+            width: auto;
         }
         .section-title:after {
             content: '';
@@ -167,561 +201,333 @@
             width: 70px;
             height: 3px;
             background: var(--neon);
+            border-radius: 3px;
         }
-
-        /* Cards & Forms */
-        .card {
-            background: var(--card-bg);
-            border-radius: 24px;
-            padding: 28px;
-            border: 1px solid rgba(15, 241, 206, 0.1);
-            margin-bottom: 30px;
-        }
-        .form-group {
+        .title-wrapper {
+            text-align: center;
             margin-bottom: 20px;
         }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #b9c7d9;
-        }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 12px 16px;
-            background: #1a1e2a;
-            border: 1px solid #2a2f3f;
-            border-radius: 12px;
-            color: #eef2ff;
-            font-family: inherit;
-            font-size: 1rem;
-        }
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: var(--neon);
-        }
 
-        /* Invoice items table */
-        .items-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
+        /* about section */
+        .about {
+            background: rgba(17, 20, 31, 0.7);
+            border-radius: 48px;
+            padding: 56px 40px;
+            margin: 60px 0;
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(15, 241, 206, 0.15);
         }
-        .items-table th, .items-table td {
-            padding: 12px;
-            text-align: center;
-            border-bottom: 1px solid #2a2f3f;
-        }
-        .items-table th {
-            color: var(--neon);
-            font-weight: 600;
-        }
-        .remove-item {
-            background: none;
-            border: none;
-            color: #ff4757;
-            cursor: pointer;
-            font-size: 1.2rem;
-        }
-        .invoice-total {
-            text-align: left;
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 2px solid var(--neon);
-        }
-
-        /* Invoices list */
-        .invoices-grid {
-            display: grid;
-            gap: 20px;
-        }
-        .invoice-item {
-            background: #1a1e2a;
-            border-radius: 16px;
-            padding: 20px;
+        .about-grid {
             display: flex;
-            justify-content: space-between;
+            gap: 48px;
             align-items: center;
             flex-wrap: wrap;
-            cursor: pointer;
-            transition: 0.2s;
         }
-        .invoice-item:hover {
-            border: 1px solid var(--neon);
-            transform: translateX(-5px);
+        .about-text {
+            flex: 2;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #e0e7f5;
         }
-        .invoice-info h4 {
+        .about-icon {
+            flex: 1;
+            text-align: center;
+            font-size: 5rem;
             color: var(--neon);
-            margin-bottom: 8px;
         }
-        .invoice-actions {
-            display: flex;
-            gap: 12px;
+
+        /* services cards */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 32px;
+            margin: 40px 0 60px;
         }
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
+        .service-card {
+            background: var(--card-bg);
+            border-radius: 28px;
+            padding: 32px 24px;
+            transition: all 0.25s;
+            border: 1px solid rgba(15, 241, 206, 0.1);
+            text-align: center;
         }
-        .status-paid {
-            background: #00b89420;
-            color: #00b894;
-            border: 1px solid #00b894;
+        .service-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--neon);
+            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.6);
         }
-        .status-unpaid {
-            background: #ff475720;
-            color: #ff4757;
-            border: 1px solid #ff4757;
-        }
-        .alert {
-            padding: 15px;
-            border-radius: 12px;
+        .service-icon {
+            font-size: 3rem;
+            color: var(--neon);
             margin-bottom: 20px;
         }
-        .alert-success {
-            background: #00b89420;
-            border: 1px solid #00b894;
-            color: #00b894;
+        .service-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 16px;
         }
-        .alert-error {
-            background: #ff475720;
-            border: 1px solid #ff4757;
-            color: #ff4757;
+        .service-card p {
+            color: #b9c3d4;
         }
 
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
+        /* contact section */
+        .contact-section {
+            background: linear-gradient(145deg, #0e111b, #090b10);
+            border-radius: 48px;
+            padding: 56px 40px;
+            margin: 60px 0;
+            text-align: center;
+            border: 1px solid rgba(15, 241, 206, 0.3);
+        }
+        .contact-methods {
+            display: flex;
             justify-content: center;
-            align-items: center;
+            gap: 48px;
+            flex-wrap: wrap;
+            margin-top: 40px;
         }
-        .modal-content {
-            background: #11141f;
-            border-radius: 28px;
-            padding: 32px;
-            max-width: 500px;
-            width: 90%;
-            border: 1px solid var(--neon);
+        .contact-item {
+            background: #111622;
+            padding: 28px 32px;
+            border-radius: 40px;
+            min-width: 220px;
+            transition: 0.2s;
+            border: 1px solid #2a2f3f;
         }
-        .close-modal {
-            float: left;
-            font-size: 28px;
-            cursor: pointer;
+        .contact-item i {
+            font-size: 2.5rem;
+            color: var(--neon);
+            margin-bottom: 15px;
+        }
+        .contact-item h4 {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+        }
+        .contact-item a, .contact-item span {
+            color: #b9d0ff;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        .contact-item a:hover {
             color: var(--neon);
         }
+        .coming-soon {
+            background: #0e111b;
+            padding: 12px 20px;
+            border-radius: 60px;
+            display: inline-block;
+            margin-top: 20px;
+            border: 1px dashed var(--neon);
+        }
 
+        /* footer */
         footer {
             text-align: center;
-            padding: 40px 0;
+            padding: 40px 0 30px;
             border-top: 1px solid rgba(15, 241, 206, 0.2);
             margin-top: 40px;
             color: #8f9bb3;
+        }
+
+        /* responsiveness */
+        @media (max-width: 680px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            .section-title {
+                font-size: 1.8rem;
+            }
+            .about {
+                padding: 32px 20px;
+            }
+            .contact-section {
+                padding: 40px 20px;
+            }
+            .btn {
+                padding: 10px 20px;
+            }
+        }
+
+        .whatsapp-number {
+            direction: ltr;
+            display: inline-block;
+            font-family: monospace;
+            letter-spacing: 1px;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .badge {
+            background: var(--neon);
+            color: #0a0c12;
+            border-radius: 100px;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <!-- header / navbar -->
     <nav class="navbar">
         <div class="logo">
             <span>⚡ SPARK</span>
-            <span>نظام الفواتير</span>
+            <span>لتقنية المعلومات</span>
         </div>
         <div class="menu-toggle" id="mobile-menu">
             <i class="fas fa-bars"></i>
         </div>
         <ul class="nav-links" id="nav-links">
-            <li><a href="#" data-page="home">الرئيسية</a></li>
-            <li><a href="#" data-page="invoices" class="active">الفواتير</a></li>
-            <li><a href="#" data-page="new">إنشاء فاتورة</a></li>
-            <li><a href="#" data-page="clients">العملاء</a></li>
+            <li><a href="#home">الرئيسية</a></li>
+            <li><a href="#about">من نحن</a></li>
+            <li><a href="#services">خدماتنا</a></li>
+            <li><a href="#contact">تواصل معنا</a></li>
         </ul>
     </nav>
 
-    <!-- Main Content -->
-    <div id="app-content">
-        <!-- Invoices List Page (Default) -->
-        <div id="page-invoices" class="section">
-            <h2 class="section-title">📄 قائمة الفواتير</h2>
-            <div style="text-align: left; margin-bottom: 20px;">
-                <button class="btn btn-primary" onclick="showPage('new')">+ فاتورة جديدة</button>
-            </div>
-            <div id="invoices-list" class="invoices-grid">
-                <div style="text-align: center; padding: 50px;">جاري تحميل الفواتير...</div>
+    <!-- Hero / الرئيسية -->
+    <section id="home">
+        <div class="hero">
+            <h1>مرحباً بك في Spark</h1>
+            <p>نحن نقدم حلول تقنية متكاملة في البرمجة، الشبكات، وتطوير الأنظمة.<br>نحوّل أفكارك إلى مشاريع حقيقية.</p>
+            <div class="hero-buttons">
+                <a href="#services" class="btn btn-primary">استكشف خدماتنا</a>
+                <a href="#contact" class="btn btn-outline">تواصل الآن</a>
             </div>
         </div>
+    </section>
 
-        <!-- New Invoice Page -->
-        <div id="page-new" class="section" style="display: none;">
-            <h2 class="section-title">🧾 إنشاء فاتورة جديدة</h2>
-            <div class="card">
-                <div id="form-message"></div>
-                <div class="form-group">
-                    <label>رقم الفاتورة</label>
-                    <input type="text" id="invoice-number" placeholder="INV-001">
+    <!-- About Section -->
+    <section id="about">
+        <div class="about">
+            <div class="about-grid">
+                <div class="about-text">
+                    <div class="title-wrapper" style="text-align: right;">
+                        <h2 class="section-title" style="display: inline-block; text-align: right;">من نحن</h2>
+                    </div>
+                    <p style="margin-top: 24px;"><strong>Spark</strong> هي شركة تقنية متخصصة في تطوير البرمجيات وتصميم الشبكات. نهدف إلى تقديم حلول ذكية، سريعة، وآمنة تساعد الأفراد والشركات على النمو في العالم الرقمي.</p>
+                    <p style="margin-top: 20px;">فريقنا يجمع بين الخبراء في مجالات الأمن السيبراني، تطوير الويب، والبنية التحتية للشبكات. نعمل بشغف لنصنع فرقاً حقيقياً في أعمال عملائنا، ونقدم تجربة تقنية موثوقة تعتمد على الابتكار والشفافية.</p>
+                    <div style="margin-top: 28px;">
+                        <span class="badge">✓ خبرة عالية</span>
+                        <span class="badge" style="margin-right: 12px;">✓ دعم 24/7</span>
+                        <span class="badge" style="margin-right: 12px;">✓ حلول مخصصة</span>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>اسم العميل</label>
-                    <input type="text" id="customer-name" placeholder="أدخل اسم العميل">
-                </div>
-                <div class="form-group">
-                    <label>تاريخ الاستحقاق</label>
-                    <input type="date" id="due-date">
-                </div>
-                <h3 style="margin: 20px 0 10px;">المنتجات / الخدمات</h3>
-                <table class="items-table" id="items-table">
-                    <thead>
-                        <tr><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th><th></th></tr>
-                    </thead>
-                    <tbody id="items-body">
-                        <tr>
-                            <td><input type="text" placeholder="المنتج" style="width:100%"></td>
-                            <td><input type="number" value="1" style="width:80px"></td>
-                            <td><input type="number" value="0" style="width:100px"></td>
-                            <td class="item-total">0</td>
-                            <td><button class="remove-item" onclick="removeRow(this)">✖</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <button class="btn btn-outline" onclick="addRow()">+ إضافة منتج</button>
-                <div class="invoice-total">
-                    الإجمالي الكلي: <span id="grand-total">0</span> ج.م
-                </div>
-                <div style="margin-top: 30px; display: flex; gap: 15px;">
-                    <button class="btn btn-primary" onclick="saveInvoice()">💾 حفظ الفاتورة</button>
-                    <button class="btn btn-outline" onclick="resetForm()">🔄 إعادة تعيين</button>
+                <div class="about-icon">
+                    <i class="fas fa-microchip"></i>
+                    <i class="fas fa-cloud-arrow-up" style="margin-right: 20px;"></i>
                 </div>
             </div>
         </div>
+    </section>
 
-        <!-- Clients Page -->
-        <div id="page-clients" class="section" style="display: none;">
-            <h2 class="section-title">👥 العملاء</h2>
-            <div class="card">
-                <div class="form-group">
-                    <label>اسم العميل الجديد</label>
-                    <input type="text" id="new-client-name" placeholder="اسم العميل">
-                </div>
-                <div class="form-group">
-                    <label>رقم الهاتف</label>
-                    <input type="text" id="client-phone" placeholder="رقم الهاتف">
-                </div>
-                <button class="btn btn-primary" onclick="addClient()">➕ إضافة عميل</button>
+    <!-- Services Section -->
+    <section id="services">
+        <div class="title-wrapper">
+            <h2 class="section-title">🛠️ خدماتنا</h2>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon"><i class="fas fa-code"></i></div>
+                <h3>تطوير المواقع والتطبيقات</h3>
+                <p>تصميم مواقع احترافية وتطبيقات جوال سريعة وحديثة تناسب طموحك.</p>
             </div>
-            <div id="clients-list" style="margin-top: 30px;">
-                <div style="text-align: center;">جاري التحميل...</div>
+            <div class="service-card">
+                <div class="service-icon"><i class="fas fa-network-wired"></i></div>
+                <h3>تصميم وتركيب الشبكات</h3>
+                <p>شبكات داخلية لاسلكية وسلكية، تخطيط البنية التحتية، وأمن الشبكات.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon"><i class="fas fa-shield-haltered"></i></div>
+                <h3>أمن المعلومات</h3>
+                <p>اختبار الاختراق، حماية البيانات، واستشارات أمنية متقدمة لحماية أعمالك.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon"><i class="fas fa-building"></i></div>
+                <h3>حلول IT للشركات</h3>
+                <p>أتمتة العمليات، الدعم التقني، وتكامل الأنظمة لرفع كفاءة المؤسسات.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon"><i class="fas fa-server"></i></div>
+                <h3>إدارة السيرفرات</h3>
+                <p>إعداد وصيانة الخوادم السحابية والمادية، مراقبة الأداء والنسخ الاحتياطي.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon"><i class="fas fa-database"></i></div>
+                <h3>حلول البيانات والذكاء الاصطناعي</h3>
+                <p>تحليل البيانات وتطوير أنظمة ذكاء الأعمال لاتخاذ قرارات أسرع.</p>
             </div>
         </div>
-    </div>
+    </section>
 
+    <!-- Contact Section with updated WhatsApp and Email -->
+    <section id="contact">
+        <div class="contact-section">
+            <h2 class="section-title" style="margin-bottom: 16px;">📞 تواصل معنا</h2>
+            <p style="margin-bottom: 20px; font-size: 1.1rem;">فريقنا على بعد نقرة واحدة — دعنا ننطلق في مشروعك القادم</p>
+            <div class="contact-methods">
+                <div class="contact-item">
+                    <i class="fab fa-whatsapp"></i>
+                    <h4>واتساب</h4>
+                    <a href="https://wa.me/249912691684" target="_blank" class="whatsapp-number">+249 912 691 684</a>
+                    <p style="font-size: 0.75rem; margin-top: 8px; opacity: 0.7;">تواصل معنا مباشرة عبر واتساب</p>
+                </div>
+                <div class="contact-item">
+                    <i class="far fa-envelope"></i>
+                    <h4>البريد الإلكتروني</h4>
+                    <a href="mailto:sparl.soom3a@gmail.com">sparl.soom3a@gmail.com</a>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h4>الموقع</h4>
+                    <div class="coming-soon">📍 قريباً — عنواننا الجديد</div>
+                </div>
+            </div>
+            <div style="margin-top: 40px;">
+                <span class="badge" style="background: #2a2f42; color:#0ff1ce;">🚀 ننتظر رسالتك</span>
+            </div>
+            <!-- additional note: support other channels -->
+        </div>
+    </section>
+
+    <!-- Footer with brand and rights -->
     <footer>
-        <p>© 2025 SPARK FOR INFORMATION TECHNOLOGY — نظام الفواتير المتكامل</p>
+        <div style="display: flex; justify-content: center; gap: 28px; margin-bottom: 20px; flex-wrap: wrap;">
+            <span><i class="fab fa-linkedin"></i> Spark IT</span>
+            <span><i class="fab fa-twitter"></i> @spark_tech</span>
+            <span><i class="fas fa-globe"></i> www.spark.com (coming soon)</span>
+        </div>
+        <p>© 2025 SPARK FOR INFORMATION TECHNOLOGY — اسبارك لتقنية المعلومات. جميع الحقوق محفوظة.</p>
         <p style="margin-top: 12px; font-size: 0.8rem;">نحوّل أفكارك إلى مشاريع حقيقية ✨</p>
     </footer>
 </div>
 
-<!-- View Invoice Modal -->
-<div id="invoice-modal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="closeModal()">&times;</span>
-        <div id="modal-invoice-details"></div>
-        <button class="btn btn-primary" onclick="markAsPaid()" style="margin-top: 20px;">✓ تحديد كمدفوع</button>
-    </div>
-</div>
-
+<!-- simple javascript for mobile toggle and smooth scroll -->
 <script>
-    // Supabase Configuration
-    const SUPABASE_URL = 'https://szteseuxckhvbfmkgsue.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN6dGVzZXV4Y2todmJmbWtnc3VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQyNTA2NjAsImV4cCI6MjA0OTgyNjY2MH0.DUMMY_KEY_PLEASE_REPLACE';
-    // ملاحظة: يجب استبدال المفتاح أعلاه بالمفتاح الحقيقي من مشروع Supabase
-    
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    
-    let currentInvoiceId = null;
-    
-    // Helper functions
-    function showPage(page) {
-        document.getElementById('page-invoices').style.display = 'none';
-        document.getElementById('page-new').style.display = 'none';
-        document.getElementById('page-clients').style.display = 'none';
-        if (page === 'invoices') document.getElementById('page-invoices').style.display = 'block';
-        else if (page === 'new') document.getElementById('page-new').style.display = 'block';
-        else if (page === 'clients') document.getElementById('page-clients').style.display = 'block';
-        
-        // Update active nav
-        document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-        document.querySelector(`.nav-links a[data-page="${page}"]`).classList.add('active');
-        
-        if (page === 'invoices') loadInvoices();
-        if (page === 'clients') loadClients();
-    }
-    
-    // Invoice Items Logic
-    function updateItemTotal(row) {
-        let qty = parseFloat(row.cells[1].querySelector('input').value) || 0;
-        let price = parseFloat(row.cells[2].querySelector('input').value) || 0;
-        let total = qty * price;
-        row.cells[3].innerText = total.toFixed(2);
-        return total;
-    }
-    
-    function updateGrandTotal() {
-        let rows = document.querySelectorAll('#items-body tr');
-        let total = 0;
-        rows.forEach(row => {
-            total += updateItemTotal(row);
+    const menuToggle = document.getElementById('mobile-menu');
+    const navLinks = document.getElementById('nav-links');
+    if(menuToggle) {
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
         });
-        document.getElementById('grand-total').innerText = total.toFixed(2);
-        return total;
     }
-    
-    function addRow() {
-        let tbody = document.getElementById('items-body');
-        let newRow = tbody.insertRow();
-        newRow.innerHTML = `
-            <td><input type="text" placeholder="المنتج" style="width:100%"></td>
-            <td><input type="number" value="1" style="width:80px"></td>
-            <td><input type="number" value="0" style="width:100px"></td>
-            <td class="item-total">0</td>
-            <td><button class="remove-item" onclick="removeRow(this)">✖</button>
-        `;
-        let inputs = newRow.querySelectorAll('input');
-        inputs.forEach(inp => inp.addEventListener('input', () => updateGrandTotal()));
-        updateGrandTotal();
-    }
-    
-    function removeRow(btn) {
-        let row = btn.closest('tr');
-        if (document.querySelectorAll('#items-body tr').length > 1) {
-            row.remove();
-            updateGrandTotal();
-        } else {
-            showMessage('form-message', 'يجب وجود منتج واحد على الأقل', 'error');
-        }
-    }
-    
-    function resetForm() {
-        document.getElementById('invoice-number').value = '';
-        document.getElementById('customer-name').value = '';
-        document.getElementById('due-date').value = '';
-        let tbody = document.getElementById('items-body');
-        tbody.innerHTML = '';
-        addRow();
-        updateGrandTotal();
-    }
-    
-    function showMessage(elementId, msg, type) {
-        let el = document.getElementById(elementId);
-        if (!el) return;
-        el.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
-        setTimeout(() => { el.innerHTML = ''; }, 3000);
-    }
-    
-    // Save Invoice to Supabase
-    async function saveInvoice() {
-        let invoiceNumber = document.getElementById('invoice-number').value.trim();
-        let customerName = document.getElementById('customer-name').value.trim();
-        let dueDate = document.getElementById('due-date').value;
-        if (!invoiceNumber || !customerName) {
-            showMessage('form-message', 'الرجاء إدخال رقم الفاتورة واسم العميل', 'error');
-            return;
-        }
-        
-        let items = [];
-        let rows = document.querySelectorAll('#items-body tr');
-        for (let row of rows) {
-            let product = row.cells[0].querySelector('input').value;
-            let qty = parseFloat(row.cells[1].querySelector('input').value) || 0;
-            let price = parseFloat(row.cells[2].querySelector('input').value) || 0;
-            let total = qty * price;
-            if (product && qty > 0) {
-                items.push({ product, quantity: qty, price, total });
+    // smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href === "#" || href === "") return;
+            const target = document.querySelector(href);
+            if (target) {
+                e.preventDefault();
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // close mobile menu if open
+                if(navLinks.classList.contains('active')) {
+                    navLinks.classList.remove('active');
+                }
             }
-        }
-        if (items.length === 0) {
-            showMessage('form-message', 'أضف منتج واحد على الأقل', 'error');
-            return;
-        }
-        
-        let totalAmount = parseFloat(document.getElementById('grand-total').innerText);
-        
-        const invoiceData = {
-            invoice_number: invoiceNumber,
-            customer_name: customerName,
-            due_date: dueDate,
-            items: items,
-            total_amount: totalAmount,
-            status: 'unpaid',
-            created_at: new Date().toISOString()
-        };
-        
-        const { data, error } = await supabase
-            .from('invoices')
-            .insert([invoiceData])
-            .select();
-        
-        if (error) {
-            console.error(error);
-            showMessage('form-message', 'خطأ في الحفظ: ' + error.message, 'error');
-        } else {
-            showMessage('form-message', 'تم حفظ الفاتورة بنجاح!', 'success');
-            resetForm();
-            setTimeout(() => showPage('invoices'), 1500);
-        }
-    }
-    
-    // Load Invoices
-    async function loadInvoices() {
-        const { data, error } = await supabase
-            .from('invoices')
-            .select('*')
-            .order('created_at', { ascending: false });
-        
-        const container = document.getElementById('invoices-list');
-        if (error) {
-            container.innerHTML = `<div class="alert alert-error">خطأ في التحميل: ${error.message}</div>`;
-            return;
-        }
-        
-        if (!data || data.length === 0) {
-            container.innerHTML = '<div style="text-align:center;">لا توجد فواتير بعد. قم بإنشاء فاتورة جديدة!</div>';
-            return;
-        }
-        
-        container.innerHTML = data.map(inv => `
-            <div class="invoice-item" onclick="viewInvoice('${inv.id}')">
-                <div class="invoice-info">
-                    <h4>${inv.invoice_number} - ${inv.customer_name}</h4>
-                    <p>المبلغ: ${inv.total_amount} ج.م | تاريخ الاستحقاق: ${inv.due_date || 'غير محدد'}</p>
-                </div>
-                <div class="invoice-actions">
-                    <span class="status-badge ${inv.status === 'paid' ? 'status-paid' : 'status-unpaid'}">${inv.status === 'paid' ? 'مدفوع' : 'غير مدفوع'}</span>
-                </div>
-            </div>
-        `).join('');
-    }
-    
-    async function viewInvoice(id) {
-        const { data, error } = await supabase
-            .from('invoices')
-            .select('*')
-            .eq('id', id)
-            .single();
-        
-        if (error || !data) return;
-        
-        currentInvoiceId = id;
-        let itemsHtml = '<table class="items-table"><tr><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th></tr>';
-        data.items.forEach(item => {
-            itemsHtml += `<tr><td>${item.product}</td><td>${item.quantity}</td><td>${item.price}</td><td>${item.total}</td></tr>`;
-        });
-        itemsHtml += '</table>';
-        
-        document.getElementById('modal-invoice-details').innerHTML = `
-            <h3>${data.invoice_number}</h3>
-            <p><strong>العميل:</strong> ${data.customer_name}</p>
-            <p><strong>التاريخ:</strong> ${data.due_date || 'لايوجد'}</p>
-            <p><strong>الحالة:</strong> ${data.status === 'paid' ? 'مدفوع' : 'غير مدفوع'}</p>
-            ${itemsHtml}
-            <h3>الإجمالي: ${data.total_amount} ج.م</h3>
-        `;
-        document.getElementById('invoice-modal').style.display = 'flex';
-    }
-    
-    async function markAsPaid() {
-        if (!currentInvoiceId) return;
-        const { error } = await supabase
-            .from('invoices')
-            .update({ status: 'paid' })
-            .eq('id', currentInvoiceId);
-        
-        if (error) {
-            alert('خطأ: ' + error.message);
-        } else {
-            alert('تم تحديث الفاتورة كمدفوع');
-            closeModal();
-            loadInvoices();
-        }
-    }
-    
-    function closeModal() {
-        document.getElementById('invoice-modal').style.display = 'none';
-        currentInvoiceId = null;
-    }
-    
-    // Clients Management
-    async function addClient() {
-        let name = document.getElementById('new-client-name').value.trim();
-        let phone = document.getElementById('client-phone').value.trim();
-        if (!name) {
-            alert('أدخل اسم العميل');
-            return;
-        }
-        const { error } = await supabase
-            .from('clients')
-            .insert([{ name, phone, created_at: new Date().toISOString() }]);
-        
-        if (error) {
-            alert('خطأ: ' + error.message);
-        } else {
-            document.getElementById('new-client-name').value = '';
-            document.getElementById('client-phone').value = '';
-            loadClients();
-        }
-    }
-    
-    async function loadClients() {
-        const { data, error } = await supabase
-            .from('clients')
-            .select('*')
-            .order('created_at', { ascending: false });
-        
-        const container = document.getElementById('clients-list');
-        if (error) {
-            container.innerHTML = `<div class="alert alert-error">خطأ: ${error.message}</div>`;
-            return;
-        }
-        if (!data || data.length === 0) {
-            container.innerHTML = '<div style="text-align:center;">لا يوجد عملاء بعد</div>';
-            return;
-        }
-        container.innerHTML = data.map(c => `
-            <div class="invoice-item">
-                <div><strong>${c.name}</strong><br>${c.phone || 'لا يوجد رقم'}</div>
-            </div>
-        `).join('');
-    }
-    
-    // Initialize event listeners
-    document.querySelectorAll('.nav-links a').forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            showPage(link.dataset.page);
         });
     });
-    
-    // Add item listeners for dynamic rows
-    document.getElementById('items-body').addEventListener('input', (e) => {
-        if (e.target.tagName === 'INPUT') updateGrandTotal();
-    });
-    
-    // Initialize default page
-    showPage('invoices');
-    
-    // Supabase table creation note - in real scenario, you need to create tables:
-    // 1. invoices: id, invoice_number, customer_name, due_date, items(jsonb), total_amount, status, created_at
-    // 2. clients: id, name, phone, created_at
-    // إذا لم تكن الجداول موجودة، ستظهر أخطاء. يرجى إنشاؤها يدوياً في Supabase.
 </script>
 </body>
 </html>
